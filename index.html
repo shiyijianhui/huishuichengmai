@@ -645,10 +645,10 @@ function switchTab(tabName) {
     </section>
 
     <!-- 时空地图 -->
-    ## 时空地图
+    时空地图
 多维度展示济南水系文化空间分布与历史演变
 
-<!-- 地图控制栏 和你截图里的界面完全一致 -->
+<!-- 地图控制栏 -->
 <div style="margin-bottom: 20px;">
   <div style="margin-bottom: 10px;">
     <span style="font-weight: 500; margin-right: 10px;">图层选择：</span>
@@ -666,8 +666,8 @@ function switchTab(tabName) {
   </div>
 </div>
 
-<!-- GIS地图容器 -->
-<div id="jinan-map" style="width: 100%; height: 500px; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); margin: 20px 0;"></div>
+<!-- GIS地图容器 强制加高度 确保渲染 -->
+<div id="jinan-map" style="width: 100% !important; height: 500px !important; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); margin: 20px 0; z-index: 1;"></div>
 
 <!-- 图例 -->
 <div style="display: flex; justify-content: center; gap: 20px; margin-top: 15px; font-size: 0.9rem;">
@@ -676,75 +676,75 @@ function switchTab(tabName) {
   <span>🌊 水系</span>
 </div>
 
-<!-- 引入Leaflet GIS库 不需要下载 直接引用 -->
+<!-- 引入Leaflet GIS库 -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- GIS地图初始化代码 已经加好济南核心点位 -->
 <script>
-// 初始化地图 中心点设为济南趵突泉
-const map = L.map('jinan-map').setView([36.6667, 117.0333], 13);
+// 等页面完全加载后再初始化地图 解决空白问题
+window.onload = function() {
+  // 初始化地图 中心点济南趵突泉
+  const map = L.map('jinan-map').setView([36.6667, 117.0333], 13);
 
-// 加载开源地图底图
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+  // 换成国内秒加载的高德地图底图 解决加载不出来的问题
+  L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+    subdomains: ['1', '2', '3', '4'],
+    attribution: '&copy; 高德地图'
+  }).addTo(map);
 
-// 济南泉水点位 经纬度已经查好 直接用
-const springMarkers = [
-  L.marker([36.6667, 117.0333]).bindPopup('<b>趵突泉</b><br>天下第一泉，济南七十二名泉之首'),
-  L.marker([36.6685, 117.0402]).bindPopup('<b>黑虎泉</b><br>济南四大泉群之一，声如虎啸'),
-  L.marker([36.6702, 117.0256]).bindPopup('<b>五龙潭</b><br>济南四大泉群之一'),
-  L.marker([36.6678, 117.0189]).bindPopup('<b>珍珠泉</b><br>济南七十二名泉之一')
-];
+  // 济南泉水点位
+  const springMarkers = [
+    L.marker([36.6667, 117.0333]).bindPopup('<b>趵突泉</b><br>天下第一泉，济南七十二名泉之首'),
+    L.marker([36.6685, 117.0402]).bindPopup('<b>黑虎泉</b><br>济南四大泉群之一，声如虎啸'),
+    L.marker([36.6702, 117.0256]).bindPopup('<b>五龙潭</b><br>济南四大泉群之一'),
+    L.marker([36.6678, 117.0189]).bindPopup('<b>珍珠泉</b><br>济南七十二名泉之一')
+  ];
 
-// 文化点位
-const cultureMarkers = [
-  L.marker([36.6625, 117.0418]).bindPopup('<b>解放阁</b><br>济南战役纪念地，红色文化点位'),
-  L.marker([36.6758, 117.0287]).bindPopup('<b>大明湖</b><br>济南三大名胜之一，泉水汇聚而成'),
-  L.marker([36.6612, 117.0298]).bindPopup('<b>芙蓉街</b><br>济南历史文化街区'),
-  L.marker([36.6645, 117.0156]).bindPopup('<b>李清照故居</b><br>宋代女词人李清照纪念馆')
-];
+  // 文化点位
+  const cultureMarkers = [
+    L.marker([36.6625, 117.0418]).bindPopup('<b>解放阁</b><br>济南战役纪念地，红色文化点位'),
+    L.marker([36.6758, 117.0287]).bindPopup('<b>大明湖</b><br>济南三大名胜之一，泉水汇聚而成'),
+    L.marker([36.6612, 117.0298]).bindPopup('<b>芙蓉街</b><br>济南历史文化街区'),
+    L.marker([36.6645, 117.0156]).bindPopup('<b>李清照故居</b><br>宋代女词人李清照纪念馆')
+  ];
 
-// 默认显示全部点位
-springMarkers.forEach(m => m.addTo(map));
-cultureMarkers.forEach(m => m.addTo(map));
+  // 默认显示全部点位
+  springMarkers.forEach(m => m.addTo(map));
+  cultureMarkers.forEach(m => m.addTo(map));
 
-// 图层切换功能
-function switchLayer(layerType) {
-  // 重置按钮样式
-  document.querySelectorAll('.map-btn').forEach(btn => {
-    btn.style.background = 'white';
-    btn.style.color = '#333';
-    btn.style.borderColor = '#ddd';
-  });
-  event.target.style.background = '#3498db';
-  event.target.style.color = 'white';
-  event.target.style.borderColor = '#3498db';
+  // 图层切换功能
+  window.switchLayer = function(layerType) {
+    document.querySelectorAll('.map-btn').forEach(btn => {
+      btn.style.background = 'white';
+      btn.style.color = '#333';
+      btn.style.borderColor = '#ddd';
+    });
+    event.target.style.background = '#3498db';
+    event.target.style.color = 'white';
+    event.target.style.borderColor = '#3498db';
 
-  // 清除所有点位
-  springMarkers.forEach(m => map.removeLayer(m));
-  cultureMarkers.forEach(m => map.removeLayer(m));
+    springMarkers.forEach(m => map.removeLayer(m));
+    cultureMarkers.forEach(m => map.removeLayer(m));
 
-  // 显示对应图层
-  if(layerType === 'all' || layerType === 'spring') {
-    springMarkers.forEach(m => m.addTo(map));
+    if(layerType === 'all' || layerType === 'spring') {
+      springMarkers.forEach(m => m.addTo(map));
+    }
+    if(layerType === 'all' || layerType === 'culture') {
+      cultureMarkers.forEach(m => m.addTo(map));
+    }
   }
-  if(layerType === 'all' || layerType === 'culture') {
-    cultureMarkers.forEach(m => m.addTo(map));
-  }
-}
 
-// 时期切换功能（后续可以加不同时期的点位）
-function switchTime(timeType) {
-  document.querySelectorAll('.time-btn').forEach(btn => {
-    btn.style.background = 'white';
-    btn.style.color = '#333';
-    btn.style.borderColor = '#ddd';
-  });
-  event.target.style.background = '#3498db';
-  event.target.style.color = 'white';
-  event.target.style.borderColor = '#3498db';
+  // 时期切换功能
+  window.switchTime = function(timeType) {
+    document.querySelectorAll('.time-btn').forEach(btn => {
+      btn.style.background = 'white';
+      btn.style.color = '#333';
+      btn.style.borderColor = '#ddd';
+    });
+    event.target.style.background = '#3498db';
+    event.target.style.color = 'white';
+    event.target.style.borderColor = '#3498db';
+  }
 }
 </script>
 
