@@ -318,25 +318,24 @@ function prevPage() {
 // 虚拟漫游 - 模式切换
 // ========================================
 function switchTourMode(mode) {
-    const modeBtns = document.querySelectorAll('.mode-btn');
-    const albumMode = document.getElementById('albumMode');
-    const panoramaMode = document.getElementById('panoramaMode');
+      const modeBtns = document.querySelectorAll('.mode-btn');
+      const albumMode = document.getElementById('albumMode');
+      const panoramaMode = document.getElementById('panoramaMode');
+      const flipbookMode = document.getElementById('flipbookMode');
 
-    modeBtns.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-mode') === mode) {
-            btn.classList.add('active');
-        }
-    });
+      modeBtns.forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.getAttribute('data-mode') === mode) {
+              btn.classList.add('active');
+          }
+      });
 
-    if (mode === 'album') {
-        albumMode.style.display = 'block';
-        panoramaMode.style.display = 'none';
-    } else {
-        albumMode.style.display = 'none';
-        panoramaMode.style.display = 'block';
-    }
-}
+      albumMode.style.display = mode === 'album' ? 'block' : 'none';
+      panoramaMode.style.display = mode === 'panorama' ? 'block' :
+  'none';
+      flipbookMode.style.display = mode === 'flipbook' ? 'block' :
+  'none';
+  }
 
 // ========================================
 // 虚拟漫游 - 全景查看器
@@ -720,3 +719,31 @@ document.addEventListener('fullscreenchange', function() {
 });
 
 console.log('济南水系文化数字人文平台 - 已加载完成');
+// ========================================
+  // Flipbook 功能
+  // ========================================
+  function loadFlipbook(url, title) {
+      document.getElementById('flipbookViewer').style.display =
+  'block';
+      document.getElementById('viewerTitle').textContent = title;
+      document.getElementById('flipbookFrame').src = url;
+      document.getElementById('viewerLink').href = url;
+// ========================================
+  // Flipbook 功能
+  // ========================================
+  function loadFlipbook(url, title) {
+      document.getElementById('flipbookViewer').style.display = 'block';
+      document.getElementById('viewerTitle').textContent = title;
+      document.getElementById('flipbookFrame').src = url;
+      document.getElementById('viewerLink').href = url;
+      document.getElementById('flipbookViewer').scrollIntoView({ behavior: 'smooth', block: 'start'
+  });
+  }
+
+  function closeFlipbookViewer() {
+      document.getElementById('flipbookViewer').style.display = 'none';
+      document.getElementById('flipbookFrame').src = '';
+  }
+
+  function openFlipbookCreator() {
+      window.open('https://flipbook.page', '_blank');
