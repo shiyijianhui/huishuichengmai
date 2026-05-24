@@ -253,38 +253,91 @@
 </div>
 
             <!-- 名士文化 -->
-            <div class="resource-content" id="tab-scholar">
-                <div class="resource-intro">
-                    <h3 data-zh="济南名士文化" data-en="Jinan Scholar Culture">济南名士文化</h3>
-                    <p data-zh="济南自古人文荟萃，李清照、辛弃疾等文化名人为这座城市增添了浓厚的文化底蕴。" data-en="Jinan has been home to many scholars, adding rich cultural heritage to the city.">济南自古人文荟萃，李清照、辛弃疾等文化名人为这座城市增添了浓厚的文化底蕴。</p>
-                </div>
-                <div class="resource-grid">
-                    <div class="resource-item">
-                        <div class="resource-image">📜</div>
-                        <h4>李清照</h4>
-                        <p data-zh="宋代女词人，婉约派代表，济南章丘人" data-en="Song Dynasty poetess, representative of graceful school">宋代女词人，婉约派代表，济南章丘人</p>
-                        <span class="resource-tag" data-zh="千古第一才女" data-en="Greatest Female Poet">千古第一才女</span>
-                    </div>
-                    <div class="resource-item">
-                        <div class="resource-image">📜</div>
-                        <h4>辛弃疾</h4>
-                        <p data-zh="南宋豪放派词人，济南历城人，爱国词人" data-en="Southern Song poet, patriotic writer">南宋豪放派词人，济南历城人，爱国词人</p>
-                        <span class="resource-tag" data-zh="词中之龙" data-en="Dragon of Poetry">词中之龙</span>
-                    </div>
-                    <div class="resource-item">
-                        <div class="resource-image">📜</div>
-                        <h4>老舍</h4>
-                        <p data-zh="现代作家，在济南创作《济南的冬天》等名篇" data-en="Modern writer, wrote 'Winter in Jinan' here">现代作家，在济南创作《济南的冬天》等名篇</p>
-                        <span class="resource-tag" data-zh="人民艺术家" data-en="People's Artist">人民艺术家</span>
-                    </div>
-                    <div class="resource-item">
-                        <div class="resource-image">📜</div>
-                        <h4>张养浩</h4>
-                        <p data-zh="元代散曲作家，济南人，政论文名世" data-en="Yuan Dynasty poet and essayist">元代散曲作家，济南人，政论文名世</p>
-                        <span class="resource-tag" data-zh="元代名臣" data-en="Yuan Dynasty Official">元代名臣</span>
-                    </div>
-                </div>
-            </div>
+            <!-- 名士文化内容块 已按时间排序+分板块 -->
+<div id="tab-scholar" class="tab-content">
+  <h3 style="margin: 0 0 20px; color: #2c5c97;">济南名士文化</h3>
+  <p style="margin: 0 0 25px; color: #555;">济南自古人文荟萃，历代文人墨客在此留下无数佳作与佳话，素有"济南名士多"的美誉。</p>
+
+  <!-- 第一板块：古代名士（宋-明 按时间从远到近排序） -->
+  <h4 style="margin: 30px 0 15px; color: #2c5c97; border-left: 4px solid #3498db; padding-left: 10px;">古代名士（宋-明）</h4>
+  <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px;">
+    <!-- 1. 曾巩 北宋（最早） -->
+    <div style="display: flex; gap: 20px; padding: 15px; border-radius: 12px; background: #f8fafc; align-items: center;">
+      <div style="width: 120px; height: 120px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+        <img src="https://picsum.photos/id/1066/200/200" style="width: 100%; height: 100%; object-fit: cover;" alt="曾巩">
+      </div>
+      <div>
+        <h4 style="margin: 0 0 8px; font-size: 1.1rem; color: #2c5c97;">曾巩</h4>
+        <p style="margin: 0 0 8px; color: #333;">北宋文学家，唐宋八大家之一，曾任齐州（济南）知州，主持修建北水门，治理济南水患</p>
+        <span style="display: inline-block; padding: 3px 10px; background: #e3f2fd; color: #1976d2; border-radius: 12px; font-size: 0.85rem;">北宋 · 唐宋八大家</span>
+      </div>
+    </div>
+
+    <!-- 2. 李清照 北宋末-南宋 -->
+    <div style="display: flex; gap: 20px; padding: 15px; border-radius: 12px; background: #f8fafc; align-items: center;">
+      <div style="width: 120px; height: 120px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+        <img src="liqingzhao.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="李清照">
+      </div>
+      <div>
+        <h4 style="margin: 0 0 8px; font-size: 1.1rem; color: #2c5c97;">李清照</h4>
+        <p style="margin: 0 0 8px; color: #333;">济南章丘人，宋代婉约词派代表，有"千古第一才女"之称，词作独步一时</p>
+        <span style="display: inline-block; padding: 3px 10px; background: #e3f2fd; color: #1976d2; border-radius: 12px; font-size: 0.85rem;">南宋 · 千古第一才女</span>
+      </div>
+    </div>
+
+    <!-- 3. 辛弃疾 南宋 -->
+    <div style="display: flex; gap: 20px; padding: 15px; border-radius: 12px; background: #f8fafc; align-items: center;">
+      <div style="width: 120px; height: 120px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+        <img src="xinqiji.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="辛弃疾">
+      </div>
+      <div>
+        <h4 style="margin: 0 0 8px; font-size: 1.1rem; color: #2c5c97;">辛弃疾</h4>
+        <p style="margin: 0 0 8px; color: #333;">济南历城人，南宋豪放派词人、爱国将领，人称"词中之龙"，与李清照并称"济南二安"</p>
+        <span style="display: inline-block; padding: 3px 10px; background: #e3f2fd; color: #1976d2; border-radius: 12px; font-size: 0.85rem;">南宋 · 词中之龙</span>
+      </div>
+    </div>
+
+    <!-- 4. 张养浩 元代 -->
+    <div style="display: flex; gap: 20px; padding: 15px; border-radius: 12px; background: #f8fafc; align-items: center;">
+      <div style="width: 120px; height: 120px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+        <img src="zhangyanghao.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="张养浩">
+      </div>
+      <div>
+        <h4 style="margin: 0 0 8px; font-size: 1.1rem; color: #2c5c97;">张养浩</h4>
+        <p style="margin: 0 0 8px; color: #333;">济南历城人，元代散曲家、政治家，《山坡羊·潼关怀古》作者，为官清廉爱民</p>
+        <span style="display: inline-block; padding: 3px 10px; background: #e3f2fd; color: #1976d2; border-radius: 12px; font-size: 0.85rem;">元代 · 散曲大家</span>
+      </div>
+    </div>
+
+    <!-- 5. 李攀龙 明代 -->
+    <div style="display: flex; gap: 20px; padding: 15px; border-radius: 12px; background: #f8fafc; align-items: center;">
+      <div style="width: 120px; height: 120px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+        <img src="lipanlong.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="李攀龙">
+      </div>
+      <div>
+        <h4 style="margin: 0 0 8px; font-size: 1.1rem; color: #2c5c97;">李攀龙</h4>
+        <p style="margin: 0 0 8px; color: #333;">济南历城人，明代"后七子"领袖，著名文学家，主盟文坛二十余年</p>
+        <span style="display: inline-block; padding: 3px 10px; background: #e3f2fd; color: #1976d2; border-radius: 12px; font-size: 0.85rem;">明代 · 后七子领袖</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第二板块：近现代名士 -->
+  <h4 style="margin: 30px 0 15px; color: #2c5c97; border-left: 4px solid #3498db; padding-left: 10px;">近现代名士</h4>
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <!-- 老舍 现代（最晚） -->
+    <div style="display: flex; gap: 20px; padding: 15px; border-radius: 12px; background: #f8fafc; align-items: center;">
+      <div style="width: 120px; height: 120px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+        <img src="laoshe.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="老舍">
+      </div>
+      <div>
+        <h4 style="margin: 0 0 8px; font-size: 1.1rem; color: #2c5c97;">老舍</h4>
+        <p style="margin: 0 0 8px; color: #333;">曾执教于齐鲁大学，在济南生活多年，写下《济南的冬天》等名篇，深爱泉城</p>
+        <span style="display: inline-block; padding: 3px 10px; background: #e3f2fd; color: #1976d2; border-radius: 12px; font-size: 0.85rem;">现代 · 人民艺术家</span>
+      </div>
+    </div>
+  </div>
+</div>
 
             <!-- 红色文化 -->
             <div class="resource-content" id="tab-revolution">
