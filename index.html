@@ -662,25 +662,29 @@ function switchTab(tabName) {
     </section>
 
     <!-- 时空地图 -->
+<!-- 时空地图 -->
 <section id="map" class="map-section">
-        <div class="container">
-            <h2 class="section-title" data-zh="时空地图" data-en="Time-Space Map">时空地图</h2>
-            <div class="map-intro">
-                <p data-zh="多维度展示济南水系文化空间分布与历史演变" data-en="Multi-dimensional display of Jinan water culture's spatial distribution and historical evolution">多维度展示济南水系文化空间分布与历史演变</p>
-            </div>
+    <div class="container">
+        <h2 class="section-title" data-zh="时空地图" data-en="Time‑Space Map">时空地图</h2>
+        <div class="map-intro">
+            <p data‑zh="多维度展示济南水系文化空间分布与历史演变" …></p>
+        </div>
+    </div>
 
-<!-- 地图控制栏 -->
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>汇水成脉 · 历史地图时空GIS</title>
+<!-- ✅这里直接放link、script、style，不要再写<!DOCTYPE><html><head>！ -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#0a0a0a}
+.map-section{
+    position:relative;
+}
+/*剩下你的GIS样式*/
+</style>
+
+<!-- 地图div、按钮控件、js脚本全部放在这 -->
+
+</section>
+
 
 /* 顶部工具栏 */
 .gis-toolbar{background:linear-gradient(135deg,#0c2340 0%,#1a3a5c 100%);color:#fff;padding:8px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:1001;position:relative}
