@@ -667,696 +667,6 @@ function switchTab(tabName) {
     <div class="container">
         <h2 class="section-title" data-zh="时空地图" data-en="Time‑Space Map">时空地图</h2>
         <div class="map-intro">
-            <p data‑zh="多维度展示济南水系文化空间分布与历史演变" …></p>
-        </div>
-    </div>
-
-<!-- ✅这里直接放link、script、style，不要再写<!DOCTYPE><html><head>！ -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<style>
-.map-section{
-    position:relative;
-}
-/*剩下你的GIS样式*/
-</style>
-
-<!-- 地图div、按钮控件、js脚本全部放在这 -->
-
-</section>
-
-
-/* 顶部工具栏 */
-.gis-toolbar{background:linear-gradient(135deg,#0c2340 0%,#1a3a5c 100%);color:#fff;padding:8px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:1001;position:relative}
-.gis-toolbar .group{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.gis-toolbar label{font-size:12px;opacity:.85;white-space:nowrap}
-.gis-toolbar select,.gis-toolbar button{padding:4px 10px;border:none;border-radius:5px;font-size:11px;cursor:pointer;transition:all .2s}
-.gis-toolbar select{background:rgba(255,255,255,.95);color:#0c2340}
-.gis-toolbar button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}
-.gis-toolbar button:hover{background:rgba(255,255,255,.3)}
-.gis-toolbar button.active{background:#4a9eff;color:#fff;font-weight:600;border-color:#4a9eff}
-
-/* 第二行：分区+历史地图控制 */
-.zone-bar{background:rgba(10,15,30,.92);padding:6px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.08);z-index:1000;position:relative}
-.zone-bar label{font-size:11px;color:#aaa;white-space:nowrap}
-.zone-tag{padding:3px 10px;border-radius:12px;font-size:11px;cursor:pointer;transition:all .2s;border:1px solid transparent;color:#888;background:rgba(255,255,255,.05)}
-.zone-tag:hover{background:rgba(255,255,255,.1)}
-.zone-tag.active{color:#fff;font-weight:600}
-
-/* 历史地图控制面板 */
-.hist-map-control{display:flex;align-items:center;gap:8px;margin-left:auto}
-.hist-map-control .opacity-slider{width:100px;height:4px;-webkit-appearance:none;background:rgba(255,255,255,.2);border-radius:2px;outline:none}
-.hist-map-control .opacity-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#4a9eff;cursor:pointer;border:2px solid #fff}
-.hist-map-control .opacity-val{font-size:11px;color:#4a9eff;min-width:30px}
-.hist-map-btn{padding:4px 12px!important;font-size:11px!important}
-.hist-map-btn.active{background:#d4a017!important;color:#fff!important;border-color:#d4a017!important}
-.hist-map-select{background:rgba(20,25,40,.9);color:#ddd;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;outline:none}
-.hist-map-select:hover{border-color:#4a9eff}
-.hist-map-select option{background:#1a1a2e;color:#ddd}
-
-/* 地图 */
-#gis-map{width:100%;height:calc(100vh - 96px);min-height:500px;z-index:1;background:#1a1a2e}
-
-/* 点位名称标签 */
-.point-label{background:rgba(0,0,0,.75)!important;border:1px solid rgba(255,255,255,.3)!important;border-radius:3px!important;padding:1px 6px!important;font-size:10px!important;font-weight:600!important;color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.9)!important;box-shadow:0 1px 4px rgba(0,0,0,.4)!important;white-space:nowrap!important;font-family:"PingFang SC","Microsoft YaHei",sans-serif!important}
-.point-label::before{display:none!important}
-
-/* 分区中心标签 */
-.zone-center-label{background:transparent!important;border:none!important;box-shadow:none!important;font-size:13px!important;font-weight:700!important;color:#fff!important;text-shadow:0 0 8px rgba(0,0,0,.95),0 2px 4px rgba(0,0,0,.9)!important;white-space:nowrap!important;font-family:"PingFang SC","Microsoft YaHei",sans-serif!important;letter-spacing:1px}
-.zone-center-label::before{display:none!important}
-
-/* 图例 */
-.legend-panel{position:absolute;bottom:16px;right:16px;background:rgba(10,15,30,.9);color:#eee;border-radius:10px;padding:10px 14px;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:1000;font-size:11px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
-.legend-panel h4{color:#4a9eff;margin-bottom:6px;font-size:12px}
-.legend-item{display:flex;align-items:center;gap:7px;margin:3px 0}
-.legend-dot{width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.5);flex-shrink:0}
-
-/* 统计面板 */
-.stats-panel{position:absolute;top:108px;left:10px;background:rgba(10,15,30,.9);color:#eee;border-radius:10px;padding:10px 14px;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:1000;font-size:11px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
-.stats-panel h4{color:#4a9eff;margin-bottom:5px;font-size:12px}
-.stats-panel .stat-row{display:flex;justify-content:space-between;gap:12px;margin:2px 0}
-.stats-panel .stat-label{color:#aaa}
-.stats-panel .stat-val{color:#4a9eff;font-weight:600}
-
-/* 历史地图信息面板 */
-.hist-info-panel{position:absolute;top:108px;right:10px;background:rgba(10,15,30,.92);color:#eee;border-radius:10px;padding:12px 16px;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:1000;font-size:11px;backdrop-filter:blur(8px);border:1px solid rgba(212,160,23,.3);max-width:260px;display:none}
-.hist-info-panel h4{color:#d4a017;margin-bottom:6px;font-size:13px}
-.hist-info-panel .hist-desc{color:#bbb;line-height:1.6;margin-bottom:6px}
-.hist-info-panel .hist-meta{color:#888;font-size:10px}
-
-/* 线路面板 */
-.route-panel{position:absolute;top:108px;right:10px;background:rgba(10,15,30,.92);color:#eee;border-radius:10px;padding:12px 16px;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:999;font-size:11px;max-width:260px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);display:none;max-height:60vh;overflow-y:auto}
-.route-panel h4{color:#4a9eff;margin-bottom:8px;font-size:13px}
-.route-panel .route-step{padding:4px 0;border-bottom:1px dashed rgba(255,255,255,.15);color:#ddd;line-height:1.5}
-.route-panel .route-step:last-child{border:none}
-.route-panel .route-place{color:#ffd700;font-weight:600}
-.route-panel .route-zones{display:inline-flex;gap:3px;margin-left:6px}
-.route-panel .route-zone-dot{width:7px;height:7px;border-radius:50%}
-.route-panel .route-meta{color:#888;margin-top:8px;font-size:10px}
-.route-panel .close-btn{float:right;cursor:pointer;color:#888;font-size:16px;line-height:1}
-
-/* 底图切换 */
-.basemap-switch{position:absolute;top:106px;left:50%;transform:translateX(-50%);background:rgba(10,15,30,.88);border-radius:20px;padding:3px;box-shadow:0 2px 12px rgba(0,0,0,.4);z-index:1000;display:flex;gap:2px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
-.basemap-switch button{border:none;background:transparent;padding:4px 12px;border-radius:16px;font-size:11px;cursor:pointer;color:#aaa;transition:all .2s}
-.basemap-switch button.active{background:#4a9eff;color:#fff}
-
-/* 智能体 */
-.agent-fab{position:absolute;bottom:20px;left:20px;z-index:1002;cursor:pointer;transition:all .3s;animation:float 3s ease-in-out infinite}
-.agent-fab:hover{transform:scale(1.08)}
-.agent-fab img{width:68px;height:68px;border-radius:50%;border:3px solid #4a9eff;box-shadow:0 4px 20px rgba(74,158,255,.5);object-fit:cover;background:#fff}
-.agent-fab .fab-tip{position:absolute;left:76px;top:50%;transform:translateY(-50%);background:rgba(10,15,30,.95);color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.3);border:1px solid rgba(74,158,255,.3)}
-.agent-fab .fab-tip::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:rgba(10,15,30,.95)}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-
-.agent-chat{position:absolute;bottom:96px;left:20px;width:350px;height:500px;background:rgba(12,20,40,.97);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.6);z-index:1003;display:none;flex-direction:column;overflow:hidden;border:1px solid rgba(74,158,255,.3);backdrop-filter:blur(12px)}
-.agent-chat.open{display:flex;animation:slideUp .3s ease}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.chat-header{background:linear-gradient(135deg,#1a3a5c,#0c2340);padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(74,158,255,.2)}
-.chat-header .avatar{width:36px;height:36px;border-radius:50%;border:2px solid #4a9eff;object-fit:cover;background:#fff}
-.chat-header .info{flex:1}
-.chat-header .name{color:#fff;font-size:13px;font-weight:600}
-.chat-header .status{color:#4a9eff;font-size:10px;display:flex;align-items:center;gap:4px}
-.chat-header .status::before{content:'';width:6px;height:6px;border-radius:50%;background:#2ecc71;display:inline-block}
-.chat-header .close-chat{color:#fff;font-size:12px;font-weight:600;cursor:pointer;padding:5px 12px;border-radius:8px;transition:all .2s;background:rgba(231,76,60,.8);display:flex;align-items:center;gap:4px}
-.chat-header .close-chat:hover{background:rgba(231,76,60,1)}
-.chat-header .close-chat::before{content:'✕';font-size:11px}
-.chat-messages{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
-.chat-msg{max-width:85%;padding:7px 10px;border-radius:10px;font-size:11px;line-height:1.6;word-break:break-word}
-.chat-msg.user{align-self:flex-end;background:#4a9eff;color:#fff;border-bottom-right-radius:4px}
-.chat-msg.agent{align-self:flex-left;background:rgba(255,255,255,.08);color:#ddd;border:1px solid rgba(255,255,255,.1);border-bottom-left-radius:4px}
-.chat-typing{align-self:flex-left;display:flex;gap:4px;padding:8px 12px;background:rgba(255,255,255,.08);border-radius:10px;border-bottom-left-radius:4px}
-.chat-typing span{width:6px;height:6px;border-radius:50%;background:#4a9eff;animation:typing 1.2s infinite}
-.chat-typing span:nth-child(2){animation-delay:.2s}
-.chat-typing span:nth-child(3){animation-delay:.4s}
-@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
-.chat-quick{padding:6px 10px;display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid rgba(255,255,255,.08)}
-.chat-quick span{padding:3px 8px;background:rgba(74,158,255,.12);border:1px solid rgba(74,158,255,.25);border-radius:12px;font-size:10px;color:#4a9eff;cursor:pointer;transition:all .2s}
-.chat-quick span:hover{background:rgba(74,158,255,.25)}
-.chat-input-row{padding:8px 10px;display:flex;gap:6px;border-top:1px solid rgba(255,255,255,.08)}
-.chat-input-row input{flex:1;padding:7px 10px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:#fff;font-size:11px;outline:none}
-.chat-input-row input:focus{border-color:#4a9eff}
-.chat-input-row input::placeholder{color:#666}
-.chat-send{padding:7px 14px;border:none;border-radius:8px;background:#4a9eff;color:#fff;font-size:11px;cursor:pointer;transition:all .2s;font-weight:600}
-.chat-send:hover{background:#2d7dd2}
-.chat-send:disabled{background:#555;cursor:not-allowed}
-
-/* Popup */
-.leaflet-popup-content-wrapper{border-radius:8px;background:rgba(10,15,30,.95);color:#eee}
-.leaflet-popup-tip{background:rgba(10,15,30,.95)}
-.popup-content{min-width:180px}
-.popup-content h3{color:#4a9eff;font-size:14px;margin-bottom:4px}
-.popup-content .popup-zones{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}
-.popup-content .popup-zone{padding:2px 7px;border-radius:10px;font-size:10px;color:#fff;font-weight:600}
-.popup-content .desc{font-size:11px;color:#bbb;line-height:1.6;margin-bottom:6px}
-.popup-content .coord{font-size:10px;color:#777;font-family:monospace}
-.popup-content .nav-btn{display:inline-block;margin-top:6px;padding:4px 10px;background:#4a9eff;color:#fff;border:none;border-radius:5px;font-size:11px;cursor:pointer}
-
-/* Toast */
-.toast{position:fixed;top:104px;left:50%;transform:translateX(-50%);background:rgba(10,15,30,.95);color:#fff;padding:8px 20px;border-radius:20px;font-size:12px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:opacity .3s;border:1px solid rgba(212,160,23,.4)}
-</style>
-</head>
-<body>
-
-<!-- 顶部工具栏：朝代 -->
-<div class="gis-toolbar">
-  <div class="group">
-    <label>朝代：</label>
-    <button class="dynasty-btn active" data-dynasty="all">全部</button>
-    <button class="dynasty-btn" data-dynasty="qin">秦</button>
-    <button class="dynasty-btn" data-dynasty="western_han">西汉</button>
-    <button class="dynasty-btn" data-dynasty="eastern_han">东汉</button>
-    <button class="dynasty-btn" data-dynasty="three_kingdoms">三国</button>
-    <button class="dynasty-btn" data-dynasty="tang">唐</button>
-    <button class="dynasty-btn" data-dynasty="song">宋</button>
-    <button class="dynasty-btn" data-dynasty="yuan">元</button>
-    <button class="dynasty-btn" data-dynasty="ming">明</button>
-    <button class="dynasty-btn" data-dynasty="qing">清</button>
-    <button class="dynasty-btn" data-dynasty="minguo">民国</button>
-  </div>
-  <div class="group">
-    <button id="btn-clear-route">清除线路</button>
-    <button id="btn-fit">重置视图</button>
-  </div>
-</div>
-
-<!-- 第二行：分区 + 历史地图控制 -->
-<div class="zone-bar">
-  <label>文化分区：</label>
-  <span class="zone-tag active" data-zone="all">全部分区</span>
-  <span class="zone-tag" data-zone="none">无（仅地图）</span>
-  <span class="zone-tag" data-zone="spring">💧 泉水文化</span>
-  <span class="zone-tag" data-zone="celebrity">📜 名士文化</span>
-  <span class="zone-tag" data-zone="ancient_city">🏯 古城墙文化</span>
-  <span class="zone-tag" data-zone="commercial_port">🏛️ 商埠文化</span>
-  <span class="zone-tag" data-zone="red">🚩 红色文化</span>
-
-  <div class="hist-map-control">
-    <button class="hist-map-btn" id="btn-hist-map">📜 历史底图</button>
-    <button class="hist-map-btn" id="btn-focus-jinan" style="background:rgba(74,158,255,.3)">📍 聚焦济南</button>
-    <select class="hist-map-select" id="hist-map-select" title="选择历史地图">
-      <option value="">-- 选择历史地图 --</option>
-      <option value="qin">秦·山东北部诸郡</option>
-      <option value="western_han">西汉·青州刺史部</option>
-      <option value="eastern_han">东汉·青州刺史部</option>
-      <option value="eastern_han_detail">东汉·东郡齐国间诸郡</option>
-      <option value="three_kingdoms">三国·青州</option>
-      <option value="tang_jinan">唐元和·齐州州城城址图</option>
-      <option value="ming_jinan">明洪武·济南府城城址图</option>
-      <option value="weijin_water">魏晋·济南水系图</option>
-      <option value="water_diversion">济南·水疏导图</option>
-      <option value="ming_to_kaihuang">明初至开埠·城市演变图</option>
-    </select>
-    <label style="color:#aaa;font-size:10px">透明度</label>
-    <input type="range" class="opacity-slider" id="hist-opacity" min="10" max="100" value="75">
-    <span class="opacity-val" id="opacity-val">75%</span>
-  </div>
-</div>
-
-<!-- 底图切换 -->
-<div class="basemap-switch">
-  <button class="basemap-btn active" data-map="gaode-sat">🛰️ 卫星实景</button>
-  <button class="basemap-btn" data-map="gaode">🗺️ 高德街道</button>
-  <button class="basemap-btn" data-map="osm">🌍 OSM</button>
-</div>
-
-<!-- 地图 -->
-<div id="gis-map"></div>
-
-<!-- 统计面板 -->
-<div class="stats-panel">
-  <h4>📊 点位统计</h4>
-  <div id="stats-content"></div>
-</div>
-
-<!-- 历史地图信息 -->
-<div class="hist-info-panel" id="hist-info-panel">
-  <h4 id="hist-title">历史地图</h4>
-  <div class="hist-desc" id="hist-desc"></div>
-  <div class="hist-meta" id="hist-meta"></div>
-</div>
-
-<!-- 线路面板 -->
-<div class="route-panel" id="route-panel">
-  <span class="close-btn" onclick="document.getElementById('route-panel').style.display='none'">×</span>
-  <h4>🗺️ 泉径客推荐线路</h4>
-  <div id="route-steps"></div>
-  <div class="route-meta" id="route-meta"></div>
-</div>
-
-<!-- 图例 -->
-<div class="legend-panel">
-  <h4>📌 文化分区</h4>
-  <div class="legend-item"><div class="legend-dot" style="background:#3498db"></div>泉水文化</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#9b59b6"></div>名士文化</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div>古城墙文化</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div>商埠文化</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>红色文化</div>
-</div>
-
-<!-- 泉径客 -->
-<div class="agent-fab" id="agent-fab" onclick="toggleChat()">
-  <img src="https://aka.doubaocdn.com/s/UbKYVQYnlJ" alt="泉径客" />
-  <div class="fab-tip">我是泉径客，点我聊聊济南泉水~</div>
-</div>
-
-<div class="agent-chat" id="agent-chat">
-  <div class="chat-header">
-    <img class="avatar" src="https://aka.doubaocdn.com/s/UbKYVQYnlJ" alt="泉径客" />
-    <div class="info">
-      <div class="name">泉径客</div>
-      <div class="status">在线 · 济南水系活地图</div>
-    </div>
-    <span class="close-chat" onclick="toggleChat()">关闭</span>
-  </div>
-  <div class="chat-messages" id="chat-messages">
-    <div class="chat-msg agent">你好呀！我是<span style="color:#4a9eff;font-weight:600">泉径客</span>，济南水系文化的活地图🧭<br><br>我可以帮你规划游览线路、讲解历史典故、推荐美食打卡。告诉我你的时间和兴趣，我来为你量身定制！</div>
-  </div>
-  <div class="chat-quick">
-    <span onclick="quickSend('只有一天时间，帮我规划济南泉水文化一日游')">一日游</span>
-    <span onclick="quickSend('我对宋代历史和名士文化感兴趣')">宋代名士</span>
-    <span onclick="quickSend('带老人孩子，推荐轻松不累的线路')">亲子轻松</span>
-    <span onclick="quickSend('济南的泉水是怎么形成的？')">泉水知识</span>
-  </div>
-  <div class="chat-input-row">
-    <input type="text" id="chat-input" placeholder="输入你的问题..." />
-    <button class="chat-send" id="chat-send" onclick="sendMessage()">发送</button>
-  </div>
-</div>
-
-<script>
-/* ============================================================
- *  汇水成脉 · 历史地图时空GIS
- *  支持：朝代历史地图底图切换 + 现代卫星图 + 点位标注
- * ============================================================ */
-
-const AGENT_CONFIG = {
-  baseUrl: "https://agentlab.sdu.edu.cn/api/proxy/api/v1",
-  appId: "d9k3t5l4shh25omj81mg",
-  apiKey: "YOUR_API_KEY_HERE",
-};
-
-// ---------- 历史地图配置 ----------
-// 每张历史地图的URL和大致地理范围（南西, 北东）
-const HISTORICAL_MAPS = {
-  qin: {
-    url: "https://aka.doubaocdn.com/s/bF9tvKFlAP",
-    title: "秦代 · 山东北部诸郡",
-    desc: "秦统一后实行郡县制，济南地区属济北郡，治所博阳。历下邑为军事重镇。",
-    meta: "公元前221年-前207年 | 谭其骧《中国历史地图集》",
-    bounds: [[34.5, 115.0], [38.5, 121.5]],
-  },
-  western_han: {
-    url: "https://aka.doubaocdn.com/s/iebTN8keXx",
-    title: "西汉 · 青州刺史部",
-    desc: "西汉设济南国，治所东平陵（今章丘龙山）。济南国辖东平陵、邹平、台、梁邹、土鼓、于陵、阳丘、般阳、菅、朝平、猇、宜成等县。",
-    meta: "公元前202年-公元8年 | 青州刺史部 | 济南国",
-    bounds: [[34.0, 114.5], [38.5, 122.5]],
-  },
-  eastern_han: {
-    url: "https://aka.doubaocdn.com/s/kbA3ddslBC",
-    title: "东汉 · 青州刺史部",
-    desc: "东汉济南国仍存，治所东平陵。光武帝刘秀废济南国为郡，后复置。济南国辖东平陵、著、於陵、台、菅、土鼓、梁邹、邹平、东朝阳、历城等县。",
-    meta: "公元25年-220年 | 青州刺史部 | 济南国",
-    bounds: [[32.5, 111.5], [38.0, 119.0]],
-  },
-  three_kingdoms: {
-    url: "https://aka.doubaocdn.com/s/yi78wxveUk",
-    title: "三国 · 青州",
-    desc: "三国时期济南属曹魏青州，济南国治所东平陵。魏文帝曹丕废济南国为济南郡，后复置。历城为济南郡治所迁移的重要节点。",
-    meta: "公元220年-280年 | 曹魏青州 | 济南国/济南郡",
-    bounds: [[34.0, 114.5], [38.5, 122.5]],
-  },
-  eastern_han_detail: {
-    url: "https://aka.doubaocdn.com/s/iqAHdNHWtU",
-    title: "东汉 · 东郡齐国间诸郡",
-    desc: "东汉时期东郡、齐国、济南国之间诸郡的详细地图，展示济南国与周边郡国的边界和城邑分布。",
-    meta: "东汉 | 兖州东郡 | 青州齐国/济南国",
-    bounds: [[34.5, 115.0], [38.0, 120.0]],
-  },
-  tang_jinan: {
-    url: "https://aka.doubaocdn.com/s/0qK6DoDvvD",
-    title: "唐元和 · 齐州州城城址图",
-    desc: "唐代齐州（济南）州城城址概况，分大城与小城（子城），城内有大明湖、百花洲、珍珠泉，历水穿城而过，北水门为水关，城外有净池、孝感水、黑虎泉群、泺水等水系。",
-    meta: "唐元和年间(806-820) | 齐州州城 | 济南古城核心",
-    bounds: [[36.650, 116.995], [36.680, 117.030]],
-  },
-  ming_jinan: {
-    url: "https://aka.doubaocdn.com/s/pV8CFTU74y",
-    title: "明洪武 · 济南府城城址图",
-    desc: "明代洪武年间济南府城城址概况，府城以砖石砌筑，城内有大明湖、百花洲、珍珠泉，孝感水穿城，府城规模较唐代齐州城有所扩展。",
-    meta: "明洪武年间(1368-1398) | 济南府城 | 山东省会",
-    bounds: [[36.650, 116.995], [36.680, 117.030]],
-  },
-  weijin_water: {
-    url: "https://aka.doubaocdn.com/s/awBc2CpUSU",
-    title: "魏晋 · 济南水系图",
-    desc: "魏晋时期济南地区水系分布，展示济水、泺水、历水、孝感水等主要河流与泉群的历史面貌，反映济南'泉城'水系的早期形态。",
-    meta: "魏晋时期(220-420) | 济南水系 | 济水流域",
-    bounds: [[36.55, 116.90], [36.80, 117.15]],
-  },
-  water_diversion: {
-    url: "https://aka.doubaocdn.com/s/F5N2UZ1D9G",
-    title: "济南 · 水疏导图",
-    desc: "济南历史上水系疏导工程图，展示泉水、河流的疏导与利用，反映济南城市发展中水利工程的重要作用。",
-    meta: "历代水利 | 泉水疏导 | 济南城市水系",
-    bounds: [[36.55, 116.90], [36.80, 117.15]],
-  },
-  ming_to_kaihuang: {
-    url: "https://aka.doubaocdn.com/s/YvBUFiBtMY",
-    title: "明初至开埠 · 济南城市演变图",
-    desc: "从明初济南府城到清末开埠时期的济南城市空间演变，展示府城、商埠区、铁路等城市要素的叠加与扩展。",
-    meta: "明初-清末(1368-1904) | 济南府城-商埠 | 城市演变",
-    bounds: [[36.64, 116.98], [36.69, 117.05]],
-  },
-};
-
-// 朝代与历史地图的映射
-const DYNASTY_HIST_MAP = {
-  qin: "qin",
-  western_han: "western_han",
-  eastern_han: "eastern_han",
-  three_kingdoms: "three_kingdoms",
-  tang: "tang_jinan",
-  ming: "ming_jinan",
-};
-
-// ---------- 文化分区配置 ----------
-const ZONES = {
-  spring:{label:"泉水文化",color:"#3498db",icon:"💧"},
-  celebrity:{label:"名士文化",color:"#9b59b6",icon:"📜"},
-  ancient_city:{label:"古城墙文化",color:"#27ae60",icon:"🏯"},
-  commercial_port:{label:"商埠文化",color:"#e67e22",icon:"🏛️"},
-  red:{label:"红色文化",color:"#e74c3c",icon:"🚩"},
-};
-
-// ---------- 点位数据 ----------
-const POINTS = [
-  {id:"p01",name:"趵突泉",dynasty:"song",lat:36.6586,lng:117.0100,era:"宋代(曾巩命名)",zones:["spring","celebrity"],desc:"济南七十二名泉之首，宋代曾巩命名，乾隆御封'天下第一泉'。"},
-  {id:"p02",name:"大明湖",dynasty:"song",lat:36.6720,lng:117.0200,era:"宋代(曾巩修堤)",zones:["spring","celebrity","ancient_city"],desc:"'四面荷花三面柳，一城山色半城湖'，宋代曾巩筑百花堤奠定格局。"},
-  {id:"p03",name:"黑虎泉",dynasty:"qing",lat:36.6570,lng:117.0180,era:"清代定名",zones:["spring","ancient_city"],desc:"济南四大泉群之一，三个兽头喷水声势浩大，最具市井气息。"},
-  {id:"p04",name:"五龙潭",dynasty:"yuan",lat:36.6600,lng:117.0080,era:"元代",zones:["spring","celebrity"],desc:"济南四大泉群之一，元代文人园林胜地，赵孟頫常游于此。"},
-  {id:"p05",name:"珍珠泉",dynasty:"ming",lat:36.6630,lng:117.0155,era:"明代(德王府苑)",zones:["spring","ancient_city"],desc:"明代德王府私家苑泉，泉泡如珠串升腾。"},
-  {id:"p06",name:"百花洲",dynasty:"qing",lat:36.6650,lng:117.0170,era:"清代",zones:["spring","ancient_city","celebrity"],desc:"大明湖南岸水系节点，清代文人雅集胜地。"},
-  {id:"p07",name:"曲水亭街",dynasty:"qing",lat:36.6640,lng:117.0160,era:"清代",zones:["spring","ancient_city"],desc:"'家家泉水，户户垂杨'的典型代表。"},
-  {id:"p08",name:"护城河",dynasty:"all",lat:36.6580,lng:117.0130,era:"明代",zones:["spring","ancient_city"],desc:"全国唯一由泉水汇聚而成的护城河。"},
-  {id:"p09",name:"小清河",dynasty:"all",lat:36.6850,lng:117.0000,era:"宋金之际(1130)",zones:["spring"],desc:"济南主要水运河道，宋金之际刘豫开挖，连通渤海。"},
-  {id:"p10",name:"李清照纪念堂",dynasty:"song",lat:36.6700,lng:117.0180,era:"宋代",zones:["celebrity"],desc:"宋代婉约词宗李清照故居纪念地。"},
-  {id:"p11",name:"辛弃疾纪念馆",dynasty:"song",lat:36.6705,lng:117.0210,era:"宋代",zones:["celebrity"],desc:"宋代豪放派词人、抗金名将辛弃疾纪念地。"},
-  {id:"p12",name:"南丰祠",dynasty:"song",lat:36.6700,lng:117.0190,era:"宋代",zones:["celebrity","ancient_city"],desc:"纪念宋代齐州知州曾巩，奠定大明湖水利格局。"},
-  {id:"p13",name:"历下亭",dynasty:"song",lat:36.6710,lng:117.0215,era:"宋代重建",zones:["celebrity","ancient_city"],desc:"杜甫'海右此亭古，济南名士多'诗句出处。"},
-  {id:"p14",name:"铁公祠",dynasty:"yuan",lat:36.6700,lng:117.0170,era:"元末明初",zones:["celebrity","ancient_city","red"],desc:"纪念元末明初兵部尚书铁铉，忠义文化象征。"},
-  {id:"p15",name:"老舍纪念馆",dynasty:"qing",lat:36.6600,lng:117.0100,era:"清末民初",zones:["celebrity"],desc:"老舍在济南任教期间故居，《济南的冬天》创作地。"},
-  {id:"p16",name:"明府城",dynasty:"ming",lat:36.6630,lng:117.0150,era:"明洪武四年(1371)",zones:["ancient_city","spring"],desc:"明代济南府城，济南城市格局的奠基之作。"},
-  {id:"p17",name:"府学文庙",dynasty:"ming",lat:36.6650,lng:117.0150,era:"明代",zones:["ancient_city","celebrity"],desc:"济南府学文庙，明代官学与祭祀孔子场所。"},
-  {id:"p18",name:"芙蓉街",dynasty:"ming",lat:36.6620,lng:117.0130,era:"明代",zones:["ancient_city","commercial_port","spring"],desc:"明代形成的济南最繁华商业街。"},
-  {id:"p19",name:"钟楼寺",dynasty:"ming",lat:36.6640,lng:117.0140,era:"明代",zones:["ancient_city"],desc:"明代钟楼寺遗址，济南古城标志性建筑。"},
-  {id:"p20",name:"明德王府",dynasty:"ming",lat:36.6630,lng:117.0160,era:"明成化三年(1467)",zones:["ancient_city","spring"],desc:"明英宗次子德王朱见潾府邸。"},
-  {id:"p21",name:"山东巡抚衙门",dynasty:"qing",lat:36.6620,lng:117.0140,era:"清代",zones:["ancient_city"],desc:"清代山东省最高行政机构所在地。"},
-  {id:"p22",name:"升阳观",dynasty:"qing",lat:36.6610,lng:117.0120,era:"清代",zones:["ancient_city","celebrity"],desc:"清代济南著名道观，供奉吕祖。"},
-  {id:"p23",name:"老商埠区",dynasty:"minguo",lat:36.6600,lng:117.0000,era:"1904年开埠",zones:["commercial_port","red"],desc:"1904年济南自开商埠，中西合璧建筑群落。"},
-  {id:"p24",name:"纬二路建筑群",dynasty:"minguo",lat:36.6600,lng:116.9980,era:"民国",zones:["commercial_port"],desc:"商埠区核心道路，民国洋行银行建筑。"},
-  {id:"p25",name:"洪家楼天主教堂",dynasty:"minguo",lat:36.6800,lng:117.0400,era:"1905年",zones:["commercial_port","ancient_city","celebrity"],desc:"哥特式天主教堂，华北最大教堂之一。"},
-  {id:"p26",name:"宽厚里",dynasty:"all",lat:36.6550,lng:117.0180,era:"现代",zones:["commercial_port","ancient_city","spring"],desc:"老建筑改造的美食文化街区。"},
-  {id:"p27",name:"胶济铁路博物馆",dynasty:"minguo",lat:36.6650,lng:117.0050,era:"1904年",zones:["red","commercial_port"],desc:"原胶济铁路济南站，山东第一条铁路标志建筑。"},
-  {id:"p28",name:"津浦铁路济南站",dynasty:"minguo",lat:36.6680,lng:116.9950,era:"1911年",zones:["red","commercial_port"],desc:"原津浦铁路济南站，德国建筑师设计。"},
-  {id:"p29",name:"解放阁",dynasty:"all",lat:36.6560,lng:117.0200,era:"1948年",zones:["red","ancient_city","spring"],desc:"济南战役解放军攻城突破口，红色教育基地。"},
-  {id:"p30",name:"泉城广场",dynasty:"all",lat:36.6560,lng:117.0150,era:"现代",zones:["spring","ancient_city"],desc:"济南城市地标，荷花音乐喷泉。"},
-  {id:"p31",name:"千佛山",dynasty:"tang",lat:36.6419,lng:117.0297,era:"唐代",zones:["celebrity","ancient_city"],desc:"济南三大名胜之一，隋唐摩崖造像。"},
-  {id:"p32",name:"四门塔",dynasty:"tang",lat:36.5812,lng:117.1214,era:"隋大业七年(611)",zones:["celebrity","ancient_city"],desc:"中国现存最古老的单层亭阁式石塔。"},
-  {id:"p33",name:"灵岩寺",dynasty:"tang",lat:36.4764,lng:116.9789,era:"唐代鼎盛",zones:["celebrity","ancient_city"],desc:"唐代四大名刹之一，海内第一名塑。"},
-  {id:"p34",name:"华不注山",dynasty:"yuan",lat:36.7300,lng:117.0600,era:"元代",zones:["celebrity","ancient_city"],desc:"赵孟頫《鹊华秋色图》中华山。"},
-  {id:"p35",name:"鹊山",dynasty:"yuan",lat:36.7200,lng:116.9800,era:"元代",zones:["celebrity","ancient_city"],desc:"《鹊华秋色图》中鹊山。"},
-  // 汉代济南国相关点位
-  {id:"h01",name:"东平陵城",dynasty:"western_han",lat:36.7280,lng:117.4480,era:"西汉(济南国治所)",zones:["ancient_city","celebrity"],desc:"西汉济南国治所，位于今章丘龙山，城址保存完好，出土大量汉代文物。"},
-  {id:"h02",name:"历城",dynasty:"western_han",lat:36.6630,lng:117.0150,era:"西汉(历城县)",zones:["ancient_city","spring"],desc:"西汉置历城县，属济南国，因南对历山(千佛山)而得名，为今济南城前身。"},
-  {id:"h03",name:"历下邑",dynasty:"qin",lat:36.6600,lng:117.0130,era:"秦代(历下邑)",zones:["ancient_city","red"],desc:"秦代历下邑，属济北郡，为齐国西部军事重镇，'历下'之名始见于史册。"},
-];
-
-const DYNASTY_CONFIG = {
-  qin:{label:"秦",color:"#c0392b"}, western_han:{label:"西汉",color:"#d35400"},
-  eastern_han:{label:"东汉",color:"#e67e22"}, three_kingdoms:{label:"三国",color:"#9b59b6"},
-  tang:{label:"唐",color:"#e74c3c"}, song:{label:"宋",color:"#e67e22"},
-  yuan:{label:"元",color:"#f1c40f"}, ming:{label:"明",color:"#27ae60"},
-  qing:{label:"清",color:"#2980b9"}, minguo:{label:"民国",color:"#8e44ad"},
-  all:{label:"",color:"#1abc9c"},
-};
-
-// ---------- 地图初始化 ----------
-const map = L.map('gis-map',{center:[36.6600,117.0150],zoom:13,zoomControl:true});
-
-const baseMaps = {
-  'gaode-sat': L.layerGroup([
-    L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18,attribution:'&copy; 高德卫星'}),
-    L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18}),
-  ]),
-  'gaode': L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18,attribution:'&copy; 高德地图'}),
-  'osm': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}),
-};
-baseMaps['gaode-sat'].addTo(map);
-let currentBaseMap='gaode-sat';
-
-document.querySelectorAll('.basemap-btn').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.basemap-btn').forEach(b=>b.classList.remove('active'));
-    this.classList.add('active');
-    const t=this.dataset.map;
-    if(currentBaseMap==='gaode-sat') map.removeLayer(baseMaps['gaode-sat']);
-    else map.removeLayer(baseMaps[currentBaseMap]);
-    baseMaps[t].addTo(map); currentBaseMap=t;
-    if(histMapOverlay) histMapOverlay.bringToFront();
-    markerLayerGroup.bringToFront();
-  });
-});
-
-// ---------- 历史地图叠加层 ----------
-let histMapOverlay = null;
-let histMapEnabled = false;
-let currentHistDynasty = null;
-
-function loadHistoricalMap(dynastyKey){
-  const mapConfig = HISTORICAL_MAPS[dynastyKey];
-  if(!mapConfig){
-    showToast("该朝代暂无历史地图底图");
-    return false;
-  }
-  if(histMapOverlay){ map.removeLayer(histMapOverlay); histMapOverlay=null; }
-  histMapOverlay = L.imageOverlay(mapConfig.url, mapConfig.bounds, {
-    opacity: parseFloat(document.getElementById('hist-opacity').value)/100,
-    interactive: false,
-  });
-  if(histMapEnabled){
-    histMapOverlay.addTo(map);
-    histMapOverlay.bringToFront();
-    markerLayerGroup.bringToFront();
-    // 自动缩放到历史地图范围
-    map.fitBounds(mapConfig.bounds, {padding:[30,30]});
-  }
-  currentHistDynasty = dynastyKey;
-  // 同步下拉框选中状态
-  const selectEl=document.getElementById('hist-map-select');
-  if(selectEl&&selectEl.value!==dynastyKey){selectEl.value=dynastyKey;}
-  document.getElementById('hist-title').textContent = mapConfig.title;
-  document.getElementById('hist-desc').textContent = mapConfig.desc;
-  document.getElementById('hist-meta').textContent = mapConfig.meta;
-  document.getElementById('hist-info-panel').style.display = histMapEnabled ? 'block' : 'none';
-  return true;
-}
-
-function toggleHistoricalMap(){
-  histMapEnabled = !histMapEnabled;
-  const btn = document.getElementById('btn-hist-map');
-  btn.classList.toggle('active', histMapEnabled);
-  if(histMapEnabled){
-    if(!currentHistDynasty){
-      // 默认加载唐代齐州州城图
-      loadHistoricalMap('tang_jinan');
-    } else if(histMapOverlay){
-      histMapOverlay.addTo(map);
-      histMapOverlay.bringToFront();
-      markerLayerGroup.bringToFront();
-    }
-    document.getElementById('hist-info-panel').style.display = 'block';
-    showToast("📜 历史地图底图已开启，可调节透明度古今对照");
-  } else {
-    if(histMapOverlay){ map.removeLayer(histMapOverlay); histMapOverlay=null; }
-    currentHistDynasty=null;
-    document.getElementById('hist-info-panel').style.display = 'none';
-    document.getElementById('hist-map-select').value='';
-    showToast("历史地图底图已关闭");
-  }
-}
-
-// 透明度调节
-document.getElementById('hist-opacity').addEventListener('input',function(){
-  const val = this.value;
-  document.getElementById('opacity-val').textContent = val+'%';
-  if(histMapOverlay) histMapOverlay.setOpacity(parseFloat(val)/100);
-});
-
-document.getElementById('btn-hist-map').addEventListener('click',toggleHistoricalMap);
-document.getElementById('btn-focus-jinan').addEventListener('click',function(){
-  map.setView([36.6600,117.0150],13);
-  showToast("📍 已聚焦济南城区");
-});
-// 历史地图下拉选择
-document.getElementById('hist-map-select').addEventListener('change',function(){
-  const mapKey=this.value;
-  if(!mapKey)return;
-  if(!histMapEnabled){toggleHistoricalMap();}
-  loadHistoricalMap(mapKey);
-  showToast("📜 已切换："+HISTORICAL_MAPS[mapKey].title);
-});
-
-// ---------- 凸包算法 ----------
-function convexHull(pts){
-  pts=[...pts].sort((a,b)=>a[0]===b[0]?a[1]-b[1]:a[0]-b[0]);
-  const cross=(O,A,B)=>(A[0]-O[0])*(B[1]-O[1])-(A[1]-O[1])*(B[0]-O[0]);
-  const lower=[];for(const p of pts){while(lower.length>=2&&cross(lower[lower.length-2],lower[lower.length-1],p)<=0)lower.pop();lower.push(p);}
-  const upper=[];for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(upper.length>=2&&cross(upper[upper.length-2],upper[upper.length-1],p)<=0)upper.pop();upper.push(p);}
-  lower.pop();upper.pop();return lower.concat(upper);
-}
-
-let zonePolygonLayer=L.layerGroup().addTo(map);
-let markers={};
-let markerLayerGroup=L.layerGroup().addTo(map);
-let currentDynasty="all";
-let currentZone="all";
-let routePolyline=null;
-let routeMarkers=[];
-let routePoints=[];
-
-function createMarker(point){
-  const cfg = DYNASTY_CONFIG[point.dynasty]||DYNASTY_CONFIG.all;
-  const primaryZone = point.zones[0];
-  const primaryColor = ZONES[primaryZone]?.color||"#888";
-  const zoneColors = point.zones.map(z=>ZONES[z]?.color||"#888");
-  let ringStyle;
-  if(zoneColors.length===1){ ringStyle=`border:3px solid ${zoneColors[0]}`; }
-  else{
-    const stops=zoneColors.map((c,i)=>`${c} ${(i/zoneColors.length)*100}% ${((i+1)/zoneColors.length)*100}%`).join(',');
-    ringStyle=`border:3px solid transparent;background-image:linear-gradient(#fff,#fff),conic-gradient(${stops});background-origin:border-box;background-clip:content-box,border-box;`;
-  }
-  const icon=L.divIcon({
-    className:'custom-marker-wrapper',
-    html:`<div style="width:18px;height:18px;border-radius:50%;${ringStyle}background-color:${primaryColor};box-shadow:0 2px 6px rgba(0,0,0,.5);cursor:pointer;transition:transform .15s;" onmouseover="this.style.transform='scale(1.4)'" onmouseout="this.style.transform='scale(1)'"></div>`,
-    iconSize:[18,18],iconAnchor:[9,9],
-  });
-  const marker=L.marker([point.lat,point.lng],{icon});
-  marker.bindTooltip(point.name,{permanent:true,direction:'top',offset:[0,-10],className:'point-label'});
-  const zoneTags=point.zones.map(z=>`<span class="popup-zone" style="background:${ZONES[z]?.color}">${ZONES[z]?.icon}${ZONES[z]?.label}</span>`).join('');
-  const dynastyLabel=DYNASTY_CONFIG[point.dynasty]?.label?`${DYNASTY_CONFIG[point.dynasty].label}代 · `:'';
-  const popupHtml=`<div class="popup-content"><h3>${point.name}</h3><div class="popup-zones">${zoneTags}</div><div class="desc">${point.desc}</div><div class="coord">📍 ${point.lat.toFixed(4)}°N, ${point.lng.toFixed(4)}°E | ${dynastyLabel}${point.era}</div><button class="nav-btn" onclick="addRoutePoint('${point.id}')">加入线路</button></div>`;
-  marker.bindPopup(popupHtml);
-  return marker;
-}
-
-function renderZonePolygons(){
-  zonePolygonLayer.clearLayers();
-  if(currentZone==="none")return; // 无分区模式：不绘制彩色区域
-  const CENTER_BOX={latMin:36.650,latMax:36.680,lngMin:116.995,lngMax:117.025};
-  Object.entries(ZONES).forEach(([zoneKey,zoneCfg])=>{
-    const zonePoints=POINTS.filter(p=>p.zones.includes(zoneKey)&&p.lat>=CENTER_BOX.latMin&&p.lat<=CENTER_BOX.latMax&&p.lng>=CENTER_BOX.lngMin&&p.lng<=CENTER_BOX.lngMax);
-    if(zonePoints.length<3)return;
-    const hull=convexHull(zonePoints.map(p=>[p.lat,p.lng]));
-    if(hull.length<3)return;
-    const isActive=(currentZone==="all"||currentZone===zoneKey);
-    const polygon=L.polygon(hull,{color:zoneCfg.color,weight:isActive?2.5:1,opacity:isActive?0.7:0.3,fillColor:zoneCfg.color,fillOpacity:isActive?0.12:0.03,dashArray:isActive?null:'6,6'});
-    polygon.bindTooltip(`${zoneCfg.icon}${zoneCfg.label}·${zonePoints.length}处`,{permanent:true,direction:'center',className:'zone-center-label'});
-    zonePolygonLayer.addLayer(polygon);
-  });
-  zonePolygonLayer.bringToBack();
-}
-
-function renderPoints(){
-  markerLayerGroup.clearLayers();
-  markers={};
-  POINTS.forEach(p=>{
-    const dynastyMatch=(currentDynasty==="all"||p.dynasty===currentDynasty||p.dynasty==="all");
-    const zoneMatch=(currentZone==="all"||currentZone==="none"||p.zones.includes(currentZone));
-    if(dynastyMatch&&zoneMatch){
-      const m=createMarker(p);
-      markerLayerGroup.addLayer(m);
-      markers[p.id]=m;
-    }
-  });
-  renderZonePolygons();
-  if(histMapOverlay&&histMapEnabled) histMapOverlay.bringToFront();
-  markerLayerGroup.bringToFront();
-  updateStats();
-}
-
-function updateStats(){
-  const visible=Object.keys(markers).length;
-  const byZone={};
-  POINTS.forEach(p=>{if(markers[p.id]){p.zones.forEach(z=>{byZone[ZONES[z]?.label||z]=(byZone[ZONES[z]?.label||z]||0)+1;});}});
-  let html=`<div class="stat-row"><span class="stat-label">当前显示</span><span class="stat-val">${visible} 处</span></div>`;
-  for(const [k,v] of Object.entries(byZone)){html+=`<div class="stat-row"><span class="stat-label">${k}</span><span class="stat-val">${v} 处</span></div>`;}
-  document.getElementById('stats-content').innerHTML=html;
-}
-
-function addRoutePoint(pointId){
-  const point=POINTS.find(p=>p.id===pointId);
-  if(point){routePoints.push(point);showToast(`已添加：${point.name}（共${routePoints.length}站）`);}
-}
-
-function drawRoute(points){
-  clearRoute();
-  if(points.length<2)return;
-  routePolyline=L.polyline(points.map(p=>[p.lat,p.lng]),{color:'#4a9eff',weight:4,opacity:.85,dashArray:'8,6'}).addTo(map);
-  points.forEach((p,i)=>{
-    const nm=L.marker([p.lat,p.lng],{icon:L.divIcon({className:'route-number',html:`<div style="width:24px;height:24px;border-radius:50%;background:#4a9eff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.5);">${i+1}</div>`,iconSize:[24,24],iconAnchor:[12,12]})}).addTo(map);
-    routeMarkers.push(nm);
-  });
-  map.fitBounds(routePolyline.getBounds(),{padding:[50,50]});
-}
-
-function clearRoute(){
-  if(routePolyline){map.removeLayer(routePolyline);routePolyline=null;}
-  routeMarkers.forEach(m=>map.removeLayer(m));routeMarkers=[];routePoints=[];
-  document.getElementById('route-panel').style.display='none';
-}
-
-function showRoutePanel(points){
-  const panel=document.getElementById('route-panel');
-  panel.style.display='block';
-  document.getElementById('route-steps').innerHTML=points.map((p,i)=>{
-    const zoneDots=p.zones.map(z=>`<span class="route-zone-dot" style="background:${ZONES[z]?.color}" title="${ZONES[z]?.label}"></span>`).join('');
-    return `<div class="route-step">第${i+1}站 · <span class="route-place">${p.name}</span><span class="route-zones">${zoneDots}</span></div>`;
-  }).join('');
-  const totalDist=points.reduce((sum,p,i)=>{if(i===0)return 0;return sum+map.distance([points[i-1].lat,points[i-1].lng],[p.lat,p.lng]);},0);
-  document.getElementById('route-meta').innerHTML=`共 ${points.length} 站 · 总行程约 ${(totalDist/1000).toFixed(2)} km · 由泉径客推荐`;
-}
-
-// ---------- 事件绑定 ----------
-document.querySelectorAll('.dynasty-btn').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.dynasty-btn').forEach(b=>b.classList.remove('active'));
-    this.classList.add('active');
-    currentDynasty=this.dataset.dynasty;
-    renderPoints();
-    // 如果历史地图已开启，自动切换到对应朝代的历史地图
-    if(histMapEnabled && DYNASTY_HIST_MAP[currentDynasty]){
-      loadHistoricalMap(DYNASTY_HIST_MAP[currentDynasty]);
-    }
-  });
-});
-
-document.querySelectorAll('.zone-tag').forEach(tag=>{
-  tag.addEventListener('click',function(){
-    document.querySelectorAll('.zone-tag').forEach(t=>{t.classList.remove('active');t.style.background='';t.style.color='';t.style.borderColor='';});
-    this.classList.add('active');
-    currentZone=this.dataset.zone;
-    if(currentZone!=='all'&&currentZone!=='none'){const c=ZONES[currentZone]?.color;this.style.background=c;this.style.color='#fff';this.style.borderColor=c;}
-    if(currentZone==='none'){this.style.background='rgba(255,255,255,.15)';this.style.color='#aaa';this.style.borderColor='rgba(255,255,255,.3)';}
-    renderPoints();
-  });
-});
-
-document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来整个map section】 -->
-<section id="map" class="map-section">
-    <div class="container">
-        <h2 class="section-title" data-zh="时空地图" data-en="Time‑Space Map">时空地图</h2>
-        <div class="map-intro">
             <p data‑zh="多维度展示济南水系文化空间分布与历史演变" data‑en="Spatio‑temporal distribution and historical evolution of Jinan water‑culture sites">多维度展示济南水系文化空间分布与历史演变</p>
         </div>
     </div>
@@ -1366,20 +676,18 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
 <style>
 .map-section{
     position:relative;
-    min-height: 100vh;
 }
-/* 修复leaflet原生控件乱跑核心CSS */
+/* 修复leaflet控件脱离父容器乱跑 */
 .map-section .leaflet-top,
 .map-section .leaflet-bottom {
     position: absolute !important;
 }
-/* 当地图不在可视区域，隐藏leaflet控件，防止飘到首页 */
 #map:not(:target) .leaflet-top,
 #map:not(:target) .leaflet-bottom {
     visibility: hidden !important;
 }
 
-/* 顶部工具栏 */
+*{margin:0;padding:0;box-sizing:border-box}
 .gis-toolbar{background:linear-gradient(135deg,#0c2340 0%,#1a3a5c 100%);color:#fff;padding:8px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:1001;position:relative}
 .gis-toolbar .group{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .gis-toolbar label{font-size:12px;opacity:.85;white-space:nowrap}
@@ -1388,13 +696,11 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
 .gis-toolbar button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)}
 .gis-toolbar button:hover{background:rgba(255,255,255,.3)}
 .gis-toolbar button.active{background:#4a9eff;color:#fff;font-weight:600;border-color:#4a9eff}
-/* 第二行：分区+历史地图控制 */
 .zone-bar{background:rgba(10,15,30,.92);padding:6px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.08);z-index:1000;position:relative}
 .zone-bar label{font-size:11px;color:#aaa;white-space:nowrap}
 .zone-tag{padding:3px 10px;border-radius:12px;font-size:11px;cursor:pointer;transition:all .2s;border:1px solid transparent;color:#888;background:rgba(255,255,255,.05)}
 .zone-tag:hover{background:rgba(255,255,255,.1)}
 .zone-tag.active{color:#fff;font-weight:600}
-/* 历史地图控制面板 */
 .hist-map-control{display:flex;align-items:center;gap:8px;margin-left:auto}
 .hist-map-control .opacity-slider{width:100px;height:4px;-webkit-appearance:none;background:rgba(255,255,255,.2);border-radius:2px;outline:none}
 .hist-map-control .opacity-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#4a9eff;cursor:pointer;border:2px solid #fff}
@@ -1404,31 +710,24 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
 .hist-map-select{background:rgba(20,25,40,.9);color:#ddd;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;outline:none}
 .hist-map-select:hover{border-color:#4a9eff}
 .hist-map-select option{background:#1a1a2e;color:#ddd}
-/* 地图 */
 #gis-map{width:100%;height:calc(100vh - 96px);min-height:500px;z-index:1;background:#1a1a2e}
-/* 点位名称标签 */
 .point-label{background:rgba(0,0,0,.75)!important;border:1px solid rgba(255,255,255,.3)!important;border-radius:3px!important;padding:1px 6px!important;font-size:10px!important;font-weight:600!important;color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.9)!important;box-shadow:0 1px 4px rgba(0,0,0,.4)!important;white-space:nowrap!important;font-family:"PingFang SC","Microsoft YaHei",sans-serif!important}
 .point-label::before{display:none!important}
-/* 分区中心标签 */
 .zone-center-label{background:transparent!important;border:none!important;box-shadow:none!important;font-size:13px!important;font-weight:700!important;color:#fff!important;text-shadow:0 0 8px rgba(0,0,0,.95),0 2px 4px rgba(0,0,0,.9)!important;white-space:nowrap!important;font-family:"PingFang SC","Microsoft YaHei",sans-serif!important;letter-spacing:1px}
 .zone-center-label::before{display:none!important}
-/* 图例 */
 .legend-panel{position:absolute;bottom:16px;right:16px;background:rgba(10,15,30,.9);color:#eee;border-radius:10px;padding:10px 14px;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:1000;font-size:11px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
 .legend-panel h4{color:#4a9eff;margin-bottom:6px;font-size:12px}
 .legend-item{display:flex;align-items:center;gap:7px;margin:3px 0}
 .legend-dot{width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.5);flex-shrink:0}
-/* 统计面板 */
 .stats-panel{position:absolute;top:108px;left:10px;background:rgba(10,15,30,.9);color:#eee;border-radius:10px;padding:10px 14px;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:1000;font-size:11px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
 .stats-panel h4{color:#4a9eff;margin-bottom:5px;font-size:12px}
 .stats-panel .stat-row{display:flex;justify-content:space-between;gap:12px;margin:2px 0}
 .stats-panel .stat-label{color:#aaa}
 .stats-panel .stat-val{color:#4a9eff;font-weight:600}
-/* 历史地图信息面板 */
 .hist-info-panel{position:absolute;top:108px;right:10px;background:rgba(10,15,30,.92);color:#eee;border-radius:10px;padding:12px 16px;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:1000;font-size:11px;backdrop-filter:blur(8px);border:1px solid rgba(212,160,23,.3);max-width:260px;display:none}
 .hist-info-panel h4{color:#d4a017;margin-bottom:6px;font-size:13px}
 .hist-info-panel .hist-desc{color:#bbb;line-height:1.6;margin-bottom:6px}
 .hist-info-panel .hist-meta{color:#888;font-size:10px}
-/* 线路面板 */
 .route-panel{position:absolute;top:108px;right:10px;background:rgba(10,15,30,.92);color:#eee;border-radius:10px;padding:12px 16px;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:999;font-size:11px;max-width:260px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);display:none;max-height:60vh;overflow-y:auto}
 .route-panel h4{color:#4a9eff;margin-bottom:8px;font-size:13px}
 .route-panel .route-step{padding:4px 0;border-bottom:1px dashed rgba(255,255,255,.15);color:#ddd;line-height:1.5}
@@ -1438,11 +737,9 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
 .route-panel .route-zone-dot{width:7px;height:7px;border-radius:50%}
 .route-panel .route-meta{color:#888;margin-top:8px;font-size:10px}
 .route-panel .close-btn{float:right;cursor:pointer;color:#888;font-size:16px;line-height:1}
-/* 底图切换 */
 .basemap-switch{position:absolute;top:106px;left:50%;transform:translateX(-50%);background:rgba(10,15,30,.88);border-radius:20px;padding:3px;box-shadow:0 2px 12px rgba(0,0,0,.4);z-index:1000;display:flex;gap:2px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
 .basemap-switch button{border:none;background:transparent;padding:4px 12px;border-radius:16px;font-size:11px;cursor:pointer;color:#aaa;transition:all .2s}
 .basemap-switch button.active{background:#4a9eff;color:#fff}
-/* 智能体 */
 .agent-fab{position:absolute;bottom:20px;left:20px;z-index:1002;cursor:pointer;transition:all .3s;animation:float 3s ease-in-out infinite}
 .agent-fab:hover{transform:scale(1.08)}
 .agent-fab img{width:68px;height:68px;border-radius:50%;border:3px solid #4a9eff;box-shadow:0 4px 20px rgba(74,158,255,.5);object-fit:cover;background:#fff}
@@ -1480,7 +777,6 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
 .chat-send{padding:7px 14px;border:none;border-radius:8px;background:#4a9eff;color:#fff;font-size:11px;cursor:pointer;transition:all .2s;font-weight:600}
 .chat-send:hover{background:#2d7dd2}
 .chat-send:disabled{background:#555;cursor:not-allowed}
-/* Popup */
 .leaflet-popup-content-wrapper{border-radius:8px;background:rgba(10,15,30,.95);color:#eee}
 .leaflet-popup-tip{background:rgba(10,15,30,.95)}
 .popup-content{min-width:180px}
@@ -1490,11 +786,9 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
 .popup-content .desc{font-size:11px;color:#bbb;line-height:1.6;margin-bottom:6px}
 .popup-content .coord{font-size:10px;color:#777;font-family:monospace}
 .popup-content .nav-btn{display:inline-block;margin-top:6px;padding:4px 10px;background:#4a9eff;color:#fff;border:none;border-radius:5px;font-size:11px;cursor:pointer}
-/* Toast */
 .toast{position:fixed;top:104px;left:50%;transform:translateX(-50%);background:rgba(10,15,30,.95);color:#fff;padding:8px 20px;border-radius:20px;font-size:12px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:opacity .3s;border:1px solid rgba(212,160,23,.4)}
 </style>
 
-<!-- 顶部工具栏：朝代 -->
 <div class="gis-toolbar">
   <div class="group">
     <label>朝代：</label>
@@ -1515,7 +809,6 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
     <button id="btn-fit">重置视图</button>
   </div>
 </div>
-<!-- 第二行：分区 + 历史地图控制 -->
 <div class="zone-bar">
   <label>文化分区：</label>
   <span class="zone-tag active" data-zone="all">全部分区</span>
@@ -1546,33 +839,27 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
     <span class="opacity-val" id="opacity-val">75%</span>
   </div>
 </div>
-<!-- 底图切换 -->
 <div class="basemap-switch">
   <button class="basemap-btn active" data-map="gaode-sat">🛰️ 卫星实景</button>
   <button class="basemap-btn" data-map="gaode">🗺️ 高德街道</button>
   <button class="basemap-btn" data-map="osm">🌍 OSM</button>
 </div>
-<!-- 地图容器 -->
 <div id="gis-map"></div>
-<!-- 统计面板 -->
 <div class="stats-panel">
   <h4>📊 点位统计</h4>
   <div id="stats-content"></div>
 </div>
-<!-- 历史地图信息 -->
 <div class="hist-info-panel" id="hist-info-panel">
   <h4 id="hist-title">历史地图</h4>
   <div class="hist-desc" id="hist-desc"></div>
   <div class="hist-meta" id="hist-meta"></div>
 </div>
-<!-- 线路面板 -->
 <div class="route-panel" id="route-panel">
   <span class="close-btn" onclick="document.getElementById('route-panel').style.display='none'">×</span>
   <h4>🗺️ 泉径客推荐线路</h4>
   <div id="route-steps"></div>
-  <div id="route-meta"></div>
+  <div class="route-meta" id="route-meta"></div>
 </div>
-<!-- 图例 -->
 <div class="legend-panel">
   <h4>📌 文化分区</h4>
   <div class="legend-item"><div class="legend-dot" style="background:#3498db"></div>泉水文化</div>
@@ -1581,7 +868,6 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
   <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div>商埠文化</div>
   <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div>红色文化</div>
 </div>
-<!-- 泉径客 -->
 <div class="agent-fab" id="agent-fab" onclick="toggleChat()">
   <img src="https://aka.doubaocdn.com/s/UbKYVQYnlJ" alt="泉径客" />
   <div class="fab-tip">我是泉径客，点我聊聊济南泉水~</div>
@@ -1611,16 +897,11 @@ document.getEleme<!-- 时空地图【修复完整版本，直接替换你原来�
 </div>
 
 <script>
-/* ============================================================
- *  汇水成脉 · 历史地图时空GIS
- *  支持：朝代历史地图底图切换 + 现代卫星图 + 点位标注
- * ============================================================ */
 const AGENT_CONFIG = {
   baseUrl: "https://agentlab.sdu.edu.cn/api/proxy/api/v1",
   appId: "d9k3t5l4shh25omj81mg",
   apiKey: "YOUR_API_KEY_HERE",
 };
-// ---------- 历史地图配置 ----------
 const HISTORICAL_MAPS = {
   qin: {
     url: "https://aka.doubaocdn.com/s/bF9tvKFlAP",
@@ -1693,7 +974,6 @@ const HISTORICAL_MAPS = {
     bounds: [[36.64, 116.98], [36.69, 117.05]],
   },
 };
-// 朝代与历史地图的映射
 const DYNASTY_HIST_MAP = {
   qin: "qin",
   western_han: "western_han",
@@ -1702,7 +982,6 @@ const DYNASTY_HIST_MAP = {
   tang: "tang_jinan",
   ming: "ming_jinan",
 };
-// ---------- 文化分区配置 ----------
 const ZONES = {
   spring:{label:"泉水文化",color:"#3498db",icon:"💧"},
   celebrity:{label:"名士文化",color:"#9b59b6",icon:"📜"},
@@ -1710,7 +989,6 @@ const ZONES = {
   commercial_port:{label:"商埠文化",color:"#e67e22",icon:"🏛️"},
   red:{label:"红色文化",color:"#e74c3c",icon:"🚩"},
 };
-// ---------- 点位数据 ----------
 const POINTS = [
   {id:"p01",name:"趵突泉",dynasty:"song",lat:36.6586,lng:117.0100,era:"宋代(曾巩命名)",zones:["spring","celebrity"],desc:"济南七十二名泉之首，宋代曾巩命名，乾隆御封'天下第一泉'。"},
   {id:"p02",name:"大明湖",dynasty:"song",lat:36.6720,lng:117.0200,era:"宋代(曾巩修堤)",zones:["spring","celebrity","ancient_city"],desc:"'四面荷花三面柳，一城山色半城湖'，宋代曾巩筑百花堤奠定格局。"},
@@ -1759,34 +1037,100 @@ const DYNASTY_CONFIG = {
   qing:{label:"清",color:"#2980b9"}, minguo:{label:"民国",color:"#8e44ad"},
   all:{label:"",color:"#1abc9c"},
 };
-// ---------- 地图初始化 ----------
-const map = L.map('gis-map',{center:[36.6600,117.0150],zoom:13,zoomControl:true});
-const baseMaps = {
-  'gaode-sat': L.layerGroup([
-    L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18,attribution:'&copy; 高德卫星'}),
-    L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18}),
-  ]),
-  'gaode': L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18,attribution:'&copy; 高德地图'}),
-  'osm': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}),
-};
-baseMaps['gaode-sat'].addTo(map);
-let currentBaseMap='gaode-sat';
-document.querySelectorAll('.basemap-btn').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.basemap-btn').forEach(b=>b.classList.remove('active'));
-    this.classList.add('active');
-    const t=this.dataset.map;
-    if(currentBaseMap==='gaode-sat') map.removeLayer(baseMaps['gaode-sat']);
-    else map.removeLayer(baseMaps[currentBaseMap]);
-    baseMaps[t].addTo(map); currentBaseMap=t;
-    if(histMapOverlay) histMapOverlay.bringToFront();
-    markerLayerGroup.bringToFront();
-  });
-});
-// ---------- 历史地图叠加层 ----------
+
+let map,baseMaps,currentBaseMap;
 let histMapOverlay = null;
 let histMapEnabled = false;
 let currentHistDynasty = null;
+let zonePolygonLayer;
+let markers={};
+let markerLayerGroup;
+let currentDynasty="all";
+let currentZone="all";
+let routePolyline=null;
+let routeMarkers=[];
+let routePoints=[];
+
+function initGisMap(){
+  map = L.map('gis-map',{center:[36.6600,117.0150],zoom:13,zoomControl:true});
+  baseMaps = {
+    'gaode-sat': L.layerGroup([
+      L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18,attribution:'&copy; 高德卫星'}),
+      L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18}),
+    ]),
+    'gaode': L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',{subdomains:['1','2','3','4'],maxZoom:18,attribution:'&copy; 高德地图'}),
+    'osm': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}),
+  };
+  baseMaps['gaode-sat'].addTo(map);
+  currentBaseMap='gaode-sat';
+  document.querySelectorAll('.basemap-btn').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.basemap-btn').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      const t=this.dataset.map;
+      if(currentBaseMap==='gaode-sat') map.removeLayer(baseMaps['gaode-sat']);
+      else map.removeLayer(baseMaps[currentBaseMap]);
+      baseMaps[t].addTo(map); currentBaseMap=t;
+      if(histMapOverlay) histMapOverlay.bringToFront();
+      markerLayerGroup.bringToFront();
+    });
+  });
+
+  zonePolygonLayer=L.layerGroup().addTo(map);
+  markerLayerGroup=L.layerGroup().addTo(map);
+
+  document.getElementById('hist-opacity').addEventListener('input',function(){
+    const val = this.value;
+    document.getElementById('opacity-val').textContent = val+'%';
+    if(histMapOverlay) histMapOverlay.setOpacity(parseFloat(val)/100);
+  });
+  document.getElementById('btn-hist-map').addEventListener('click',toggleHistoricalMap);
+  document.getElementById('btn-focus-jinan').addEventListener('click',function(){
+    map.setView([36.6600,117.0150],13);
+    showToast("📍 已聚焦济南城区");
+  });
+  document.getElementById('hist-map-select').addEventListener('change',function(){
+    const mapKey=this.value;
+    if(!mapKey)return;
+    if(!histMapEnabled){toggleHistoricalMap();}
+    loadHistoricalMap(mapKey);
+    showToast("📜 已切换："+HISTORICAL_MAPS[mapKey].title);
+  });
+
+  document.querySelectorAll('.dynasty-btn').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.dynasty-btn').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      currentDynasty=this.dataset.dynasty;
+      renderPoints();
+      if(histMapEnabled && DYNASTY_HIST_MAP[currentDynasty]){
+        loadHistoricalMap(DYNASTY_HIST_MAP[currentDynasty]);
+      }
+    });
+  });
+  document.querySelectorAll('.zone-tag').forEach(tag=>{
+    tag.addEventListener('click',function(){
+      document.querySelectorAll('.zone-tag').forEach(t=>{t.classList.remove('active');t.style.background='';t.style.color='';t.style.borderColor='';});
+      this.classList.add('active');
+      currentZone=this.dataset.zone;
+      if(currentZone!=='all'&&currentZone!=='none'){const c=ZONES[currentZone]?.color;this.style.background=c;this.style.color='#fff';this.style.borderColor=c;}
+      if(currentZone==='none'){this.style.background='rgba(255,255,255,.15)';this.style.color='#aaa';this.style.borderColor='rgba(255,255,255,.3)';}
+      renderPoints();
+    });
+  });
+  document.getElementById('btn-clear-route').addEventListener('click',clearRoute);
+  document.getElementById('btn-fit').addEventListener('click',function(){map.setView([36.6600,117.0150],13);});
+
+  document.getElementById('chat-input').addEventListener('keypress',function(e){if(e.key==='Enter')sendMessage();});
+  document.getElementById('gis-map').addEventListener('click',function(e){
+    const chat=document.getElementById('agent-chat');
+    if(chat.classList.contains('open')&&!chat.contains(e.target))toggleChat();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){const chat=document.getElementById('agent-chat');if(chat.classList.contains('open'))toggleChat();}});
+
+  renderPoints();
+}
+
 function loadHistoricalMap(dynastyKey){
   const mapConfig = HISTORICAL_MAPS[dynastyKey];
   if(!mapConfig){
@@ -1835,24 +1179,6 @@ function toggleHistoricalMap(){
     showToast("历史地图底图已关闭");
   }
 }
-document.getElementById('hist-opacity').addEventListener('input',function(){
-  const val = this.value;
-  document.getElementById('opacity-val').textContent = val+'%';
-  if(histMapOverlay) histMapOverlay.setOpacity(parseFloat(val)/100);
-});
-document.getElementById('btn-hist-map').addEventListener('click',toggleHistoricalMap);
-document.getElementById('btn-focus-jinan').addEventListener('click',function(){
-  map.setView([36.6600,117.0150],13);
-  showToast("📍 已聚焦济南城区");
-});
-document.getElementById('hist-map-select').addEventListener('change',function(){
-  const mapKey=this.value;
-  if(!mapKey)return;
-  if(!histMapEnabled){toggleHistoricalMap();}
-  loadHistoricalMap(mapKey);
-  showToast("📜 已切换："+HISTORICAL_MAPS[mapKey].title);
-});
-// ---------- 凸包算法 ----------
 function convexHull(pts){
   pts=[...pts].sort((a,b)=>a[0]===b[0]?a[1]-b[1]:a[0]-b[0]);
   const cross=(O,A,B)=>(A[0]-O[0])*(B[1]-O[1])-(A[1]-O[1])*(B[0]-O[0]);
@@ -1860,14 +1186,6 @@ function convexHull(pts){
   const upper=[];for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(upper.length>=2&&cross(upper[upper.length-2],upper[upper.length-1],p)<=0)upper.pop();upper.push(p);}
   lower.pop();upper.pop();return lower.concat(upper);
 }
-let zonePolygonLayer=L.layerGroup().addTo(map);
-let markers={};
-let markerLayerGroup=L.layerGroup().addTo(map);
-let currentDynasty="all";
-let currentZone="all";
-let routePolyline=null;
-let routeMarkers=[];
-let routePoints=[];
 function createMarker(point){
   const cfg = DYNASTY_CONFIG[point.dynasty]||DYNASTY_CONFIG.all;
   const primaryZone = point.zones[0];
@@ -1962,31 +1280,7 @@ function showRoutePanel(points){
   const totalDist=points.reduce((sum,p,i)=>{if(i===0)return 0;return sum+map.distance([points[i-1].lat,points[i-1].lng],[p.lat,p.lng]);},0);
   document.getElementById('route-meta').innerHTML=`共 ${points.length} 站 · 总行程约 ${(totalDist/1000).toFixed(2)} km · 由泉径客推荐`;
 }
-// ---------- 事件绑定 ----------
-document.querySelectorAll('.dynasty-btn').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.dynasty-btn').forEach(b=>b.classList.remove('active'));
-    this.classList.add('active');
-    currentDynasty=this.dataset.dynasty;
-    renderPoints();
-    if(histMapEnabled && DYNASTY_HIST_MAP[currentDynasty]){
-      loadHistoricalMap(DYNASTY_HIST_MAP[currentDynasty]);
-    }
-  });
-});
-document.querySelectorAll('.zone-tag').forEach(tag=>{
-  tag.addEventListener('click',function(){
-    document.querySelectorAll('.zone-tag').forEach(t=>{t.classList.remove('active');t.style.background='';t.style.color='';t.style.borderColor='';});
-    this.classList.add('active');
-    currentZone=this.dataset.zone;
-    if(currentZone!=='all'&&currentZone!=='none'){const c=ZONES[currentZone]?.color;this.style.background=c;this.style.color='#fff';this.style.borderColor=c;}
-    if(currentZone==='none'){this.style.background='rgba(255,255,255,.15)';this.style.color='#aaa';this.style.borderColor='rgba(255,255,255,.3)';}
-    renderPoints();
-  });
-});
-document.getElementById('btn-clear-route').addEventListener('click',clearRoute);
-document.getElementById('btn-fit').addEventListener('click',function(){map.setView([36.6600,117.0150],13);});
-// ---------- 智能体 ----------
+
 let chatHistory=[];
 let isGenerating=false;
 function toggleChat(){
@@ -2033,7 +1327,16 @@ async function sendMessage(){
       const data=await resp.json();
       response=data.choices?.[0]?.message?.content||'抱歉，暂时无法回答。';
     }else{
-      await new Promise(r=>setTimeout(r,
+      await new Promise(r=>setTimeout(r,1200));
+      response=generateDemoResponse(query,chatHistory);
+    }
+    hideTyping();addMessage('agent',response);chatHistory.push({role:'assistant',content:response});
+    autoDrawRoute(response);
+  }catch(err){
+    hideTyping();
+    addMessage('agent','⚠️ 连接智能体遇到问题，使用本地知识库解答...');
+    await new Promise(r=>setTimeout(r,800));
+    const demo=generateDemoResponse(query,chatHistory);
 
 
 
